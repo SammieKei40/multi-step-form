@@ -201,7 +201,7 @@ export default function Home() {
           href="https://github.com/SammieKei40"
           className="text-blue-800 underline"
         >
-          Sammie Kei
+          Samuel Shodipo
         </a>
       </p>
     </main>
