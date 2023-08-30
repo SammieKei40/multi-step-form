@@ -207,3 +207,189 @@ export default function Home() {
     </main>
   );
 }
+
+<div className="flex items-center gap-5 p-3">
+  <h2 className="text-3xl font-bold underline">Table</h2>
+  <div className="grow p-5">
+    <div className=" w-[30rem]">
+      <div className="grid grid-cols-1 gap-3">
+        <Table data={data} columns={columns} itemsPerPage={100} link={"/details"} loading={false} showCheckbox={false} />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+
+interface TableProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any[];
+  columns: { value: string; text: string }[];
+  link?: string;
+  itemsPerPage: number;
+  loading: boolean;
+  showCheckbox?: boolean;
+  icon?: React.ElementType
+}
+const Table: React.FC<TableProps> = ({
+  data,
+  columns,
+  itemsPerPage,
+  showCheckbox,
+  link
+}) => {
+  //   const history = useHistory();
+
+  const [page] = useState<number>(0);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
+
+  // const totalPages = Math.ceil(data?.length / itemsPerPage);
+
+  const startIndex = page * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = data?.slice(startIndex, endIndex);
+  const remainingItems = data?.slice(page * itemsPerPage);
+
+  // const handlePageClick = ({ selected }) => {
+  //     setPage(selected);
+  // };
+
+  // const goToPage = (newPage: number) => {
+  //     if (newPage >= 1 && newPage <= totalPages) {
+  //         setPage(newPage);
+  //     }
+  // };
+
+  const handleSelection = (item: string) => {
+    if (selectedItems.includes(item)) {
+      setSelectedItems(selectedItems.filter(selected => selected !== item));
+    } else {
+      setSelectedItems([...selectedItems, item]);
+    }
+  };
+
+  const selectAllItems = () => {
+    if (data) { // Check if data is not undefined
+      if (selectAll) {
+        setSelectedItems([]);
+      } else {
+        setSelectedItems([...data]);
+      }
+      setSelectAll(!selectAll);
+    }
+  };
+
+
+
+  //   const handleLinkClick = (linkItem: any) => {
+  //     if (linkItem.action) {
+  //       linkItem.action();
+  //     } else {
+  //       history.push(linkItem.to);
+  //     }
+  //   };
+
+
+  return (
+
+
+    <table className="">
+      <thead className="text-black  px-3 rounded-lg">
+        <tr className="bg-[#FFF9E3]">
+          {showCheckbox && (
+            <th scope="col" className="p-4">
+              <span className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="w-6 h-6 cursor-pointer text-blue bg-white border-gray rounded hover:border-blue focus:ring-2"
+                  checked={selectAll}
+                  onChange={selectAllItems}
+                />
+                <label htmlFor="checkbox-all-search" className="sr-only">
+                  checkbox
+                </label>
+              </span>
+            </th>
+          )}
+          {columns.map((column) => (
+            <th key={column.value} scope="col" className="p-3 whitespace-nowrap text-center">
+              {column.text}
+            </th>
+          ))}
+          <th scope="col" className="p-3 text-center">
+            Views
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {paginatedData?.map((item, index) => (
+
+          <tr key={item.id} className="bg-white border-b ">
+            {showCheckbox && (
+              <td className="w-4 p-2">
+                <span className="flex items-center">
+                  <input
+                    id={`checkbox-table-search-${index}`}
+                    type="checkbox"
+                    className="w-6 h-6 cursor-pointer text-blue bg-white border-gray rounded hover:border-blue focus:ring-2"
+                    checked={selectedItems.includes(item)}
+                    onChange={() => handleSelection(item)}
+                  />
+                  <label htmlFor={`checkbox-table-search-${index}`} className="sr-only">
+                    checkbox
+                  </label>
+                </span>
+              </td>
+            )}
+            {columns.map((column) => (
+              <td
+                key={column.value}
+                className="text-black leading-tight p-3 text-center font-medium text-md whitespace-nowrap"
+              >
+                {column.value === 'active' ? (
+                  item[column.value] === 'true' ? (
+                    <span className="text-green-500">Successful</span>
+                  ) : item[column.value] === 'false' ? (
+                    <span className="text-red">Failed</span>
+                  ) : (
+                    <span className="text-black">Pending</span>
+                  )
+                ) : (
+                  item[column.value]
+                )}
+
+              </td>
+
+            ))}
+            <td className="relative text-center p-3 text-md cursor-pointer  text-black">
+              <Link to={link || ''} className="border p-2 bg-[#FFFDF6]">
+                View
+              </Link>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+
+      <tfoot className="text-black bg-white border-t  shadow-lg">
+        <tr>
+          {remainingItems && remainingItems.length > 0 && (
+            <td colSpan={columns.length} className="p-3 uppercase text-sm text-gray-500">
+              Total {remainingItems.length}
+            </td>
+          )}
+
+
+
+
+        </tr>
+      </tfoot>
+    </table>
+
+  );
+};
+
+export default Table;
