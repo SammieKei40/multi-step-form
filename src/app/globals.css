@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.active {
+  background: rgb(191, 226, 253);
+  color: hsl(213, 96%, 18%);
+  font-weight: 600;
+  transition: background 800ms ease-in-out;
+}
